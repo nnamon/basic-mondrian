@@ -57,3 +57,6 @@ class GenTree(object):
             int: number of leaf nodes covered by current node
         """
         return self.leaf_num
+
+    def __repr__(self):
+        return '@%s: %s' % (self.value, self.child)
