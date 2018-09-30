@@ -37,6 +37,19 @@ class Partition(object):
 
 
 class BasicMondrian:
+    """Basic Mondrian for k-anonymity.
+
+    This function supports both numeric values and categoric values.
+
+    For numeric values, each iterator is a mean split.
+    For categoric values, each iterator is a split on GH.
+
+    Args:
+        att_trees (): the taxonomic tree.
+        data (): the data to anonymise.
+        k (int): the k-value.
+        QI_num (int): the number of quasi-identifiers.
+    """
 
     def __init__(self, att_trees, data, k, qi_num=-1):
         self.working = []
@@ -59,9 +72,7 @@ class BasicMondrian:
             self.qi_len = qi_num
 
     def get_normalized_width(self, partition, index):
-        """
-        return Normalized width of partition
-        similar to NCP
+        """Returns the normalized width of partition, similar to NCP.
         """
         if self.is_cat[index] is False:
             low = partition.width[index][0]
@@ -73,9 +84,10 @@ class BasicMondrian:
         return width * 1.0 / self.qi_range[index]
 
     def choose_dimension(self, partition):
-        """
-        chooss dim with largest normlized Width
-        return dim index.
+        """Choose the dim with the largest normalized width.
+
+        Returns:
+            int: the dim index.
         """
         max_width = -1
         max_dim = -1
@@ -94,9 +106,10 @@ class BasicMondrian:
         return max_dim
 
     def frequency_set(self, partition, dim):
-        """
-        get the frequency_set of partition on dim
-        return dict{key: str values, values: count}
+        """Get the frequency_set of partition on dim.
+
+        Returns:
+            dict{key: str values, values: count}
         """
         frequency = {}
 
@@ -109,12 +122,13 @@ class BasicMondrian:
         return frequency
 
     def find_median(self, partition, dim):
-        """
-        find the middle of the partition
-        return splitVal
+        """Find the middle of the partition.
+
+        Returns:
+            split_val
         """
         frequency = self.frequency_set(partition, dim)
-        splitVal = ''
+        split_val = ''
         value_list = frequency.keys()
         value_list.sort(cmp=cmp_str)
         total = sum(frequency.values())
@@ -129,23 +143,24 @@ class BasicMondrian:
         for i, t in enumerate(value_list):
             index += frequency[t]
             if index >= middle:
-                splitVal = t
+                split_val = t
                 split_index = i
                 break
         else:
-            raise Exception('Error: cannot find splitVal')
+            raise Exception('Error: cannot find split_val')
 
         try:
-            nextVal = value_list[split_index + 1]
+            next_val = value_list[split_index + 1]
         except IndexError:
-            nextVal = splitVal
+            next_val = split_val
 
-        return (splitVal, nextVal, value_list[0], value_list[-1])
+        return (split_val, next_val, value_list[0], value_list[-1])
 
-    def split_numerical_value(self, numeric_value, splitVal):
-        """
-        split numeric value on splitVal
-        return sub ranges
+    def split_numerical_value(self, numeric_value, split_val):
+        """Split numeric value on split_val.
+
+        Returns:
+            sub ranges
         """
         split_num = numeric_value.split(',')
         if len(split_num) <= 1:
@@ -154,25 +169,25 @@ class BasicMondrian:
             low = split_num[0]
             high = split_num[1]
             # Fix 2,2 problem
-            if low == splitVal:
+            if low == split_val:
                 lvalue = low
             else:
-                lvalue = low + ',' + splitVal
-            if high == splitVal:
+                lvalue = low + ',' + split_val
+            if high == split_val:
                 rvalue = high
             else:
-                rvalue = splitVal + ',' + high
+                rvalue = split_val + ',' + high
             return lvalue, rvalue
 
     def split_numerical(self, partition, dim, pwidth, pmiddle):
-        """
-        strict split numeric attribute by finding a median,
+        """Strict split numeric attribute by finding a median.
+
         lhs = [low, means], rhs = (mean, high]
         """
         sub_partitions = []
 
         # numeric attributes
-        (splitVal, nextVal, low, high) = self.find_median(partition, dim)
+        (split_val, next_val, low, high) = self.find_median(partition, dim)
         p_low = self.att_trees[dim].dict[low]
         p_high = self.att_trees[dim].dict[high]
 
@@ -183,14 +198,14 @@ class BasicMondrian:
             pmiddle[dim] = low + ',' + high
         pwidth[dim] = (p_low, p_high)
 
-        if splitVal == '' or splitVal == nextVal:
+        if split_val == '' or split_val == next_val:
             # update middle
             return []
 
-        middle_pos = self.att_trees[dim].dict[splitVal]
+        middle_pos = self.att_trees[dim].dict[split_val]
         lmiddle = pmiddle[:]
         rmiddle = pmiddle[:]
-        lmiddle[dim], rmiddle[dim] = self.split_numerical_value(pmiddle[dim], splitVal)
+        lmiddle[dim], rmiddle[dim] = self.split_numerical_value(pmiddle[dim], split_val)
         lhs = []
         rhs = []
 
@@ -205,20 +220,19 @@ class BasicMondrian:
         lwidth = pwidth[:]
         rwidth = pwidth[:]
         lwidth[dim] = (pwidth[dim][0], middle_pos)
-        rwidth[dim] = (self.att_trees[dim].dict[nextVal], pwidth[dim][1])
+        rwidth[dim] = (self.att_trees[dim].dict[next_val], pwidth[dim][1])
         sub_partitions.append(Partition(lhs, lwidth, lmiddle, self.qi_len))
         sub_partitions.append(Partition(rhs, rwidth, rmiddle, self.qi_len))
         return sub_partitions
 
     def split_categorical(self, partition, dim, pwidth, pmiddle):
-        """
-        split categorical attribute using generalization hierarchy
+        """Split categorical attribute using generalization hierarchy.
         """
         sub_partitions = []
 
         # categoric attributes
-        splitVal = self.att_trees[dim][partition.middle[dim]]
-        sub_node = [t for t in splitVal.child]
+        split_val = self.att_trees[dim][partition.middle[dim]]
+        sub_node = [t for t in split_val.child]
         sub_groups = []
 
         for i in range(len(sub_node)):
@@ -260,8 +274,7 @@ class BasicMondrian:
         return sub_partitions
 
     def split_partition(self, partition, dim):
-        """
-        split partition and distribute records to different sub-partitions
+        """Split partition and distribute records to different sub-partitions.
         """
         pwidth = partition.width
         pmiddle = partition.middle
@@ -272,9 +285,9 @@ class BasicMondrian:
             return self.split_categorical(partition, dim, pwidth, pmiddle)
 
     def anonymize(self, partition):
-        """
-        Main procedure of Half_Partition.
-        recursively partition groups until not allowable.
+        """Main procedure of Half_Partition.
+
+        Recursively partition groups until not allowable.
         """
         if self.check_splitable(partition) is False:
             self.working.append(partition)
@@ -295,8 +308,7 @@ class BasicMondrian:
                 self.anonymize(sub_p)
 
     def check_splitable(self, partition):
-        """
-        Check if the partition can be further splited while satisfying k-anonymity.
+        """Check if the partition can be further split while satisfying k-anonymity.
         """
         temp = sum(partition.allow)
         if temp == 0:
@@ -304,18 +316,7 @@ class BasicMondrian:
         return True
 
     def mondrian(self):
-        """Basic Mondrian for k-anonymity.
-
-        This function supports both numeric values and categoric values.
-
-        For numeric values, each iterator is a mean split.
-        For categoric values, each iterator is a split on GH.
-
-        Args:
-            att_trees (): the taxonomic tree.
-            data (): the data to anonymise.
-            k (int): the k-value.
-            QI_num (int): the number of quasi-identifiers.
+        """Runs the Basic Mondrian routine.
 
         Returns:
             (result, ncp): Returns the results in a 2-dimensional list and the normalized certainty
