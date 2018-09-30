@@ -16,20 +16,22 @@ class Tree:
         if self.dictionary is not None:
             return self.dictionary
 
-        self.dictionary = self.__flatten(self.struct)
+        self.dictionary = self.flatten(self.struct)
         return self.dictionary
 
-    @classmethod
-    def struct_to_tree(cls, data):
-        return cls(data)
+    @staticmethod
+    def struct_to_tree(data):
+        return Tree(data)
 
-    @classmethod
-    def json_to_tree(cls, json_data):
+    @staticmethod
+    def json_to_tree(json_data):
         working = json.loads(json_data)
-        return cls.struct_to_tree(working)
+        return Tree.struct_to_tree(working)
 
-    @classmethod
-    def __flatten(cls, struct, parent=None, working={}):
+    def flatten(self, struct, parent=None, working=None):
+        if working is None:
+            working = {}
+
         if parent is None:
             parent = GenTree('*')
             working['*'] = parent
@@ -37,11 +39,11 @@ class Tree:
         if type(struct) is dict:
             for i, v in struct.iteritems():
                 node = GenTree(i, parent, False)
-                cls.__flatten(v, node, working)
-                working.setdefault(i, node)
+                self.flatten(v, node, working)
+                working[i] = node
         elif type(struct) is list:
             for i in struct:
                 leaf = GenTree(i, parent, True)
-                working.setdefault(i, leaf)
+                working[i] = leaf
 
         return working

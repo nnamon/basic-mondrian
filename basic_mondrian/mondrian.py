@@ -81,6 +81,11 @@ class BasicMondrian:
                      float(self.att_trees[index].sort_value[low]))
         else:
             width = partition.width[index]
+
+        divisor = self.qi_range[index]
+        if divisor == 0:
+            return 0
+
         return width * 1.0 / self.qi_range[index]
 
     def choose_dimension(self, partition):
@@ -251,7 +256,7 @@ class BasicMondrian:
                 except KeyError:
                     continue
             else:
-                print 'Generalization hierarchy error!'
+                raise Exception('Generalization hierarchy error!')
 
         flag = True
         for index, sub_group in enumerate(sub_groups):
