@@ -27,6 +27,13 @@ data = [['greg', 'male', 'AAA'],
         ['pearl', 'male', 'PPP'],
         ['peridot', 'male', 'QQQ']]
 
+expected = ([['greg', '*', 'AAA'], ['greg', '*', 'LLL'], ['greg', '*', 'MMM'],
+             ['connie', '*', 'BBB'], ['connie', '*', 'NNN'], ['garnet', 'female', 'CCC'],
+             ['garnet', 'female', 'DDD'], ['amethyst', '*', 'EEE'], ['amethyst', '*', 'FFF'],
+             ['pearl', 'male', 'HHH'], ['pearl', 'male', 'PPP'], ['pearl', 'female', 'GGG'],
+             ['pearl', 'female', 'OOO'], ['peridot', 'male', 'KKK'], ['peridot', 'male', 'QQQ'],
+             ['peridot', 'female', 'III'], ['peridot', 'female', 'JJJ']], 0.0)
+
 
 def test_anonymizer():
     sex_tree_instance = Tree.struct_to_tree(gem_tree)
