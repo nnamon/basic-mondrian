@@ -256,7 +256,7 @@ class BasicMondrian:
                 except KeyError:
                     continue
             else:
-                raise Exception('Generalization hierarchy error!')
+                raise Exception('Category "%s" unknown.' % qid_value)
 
         flag = True
         for index, sub_group in enumerate(sub_groups):
