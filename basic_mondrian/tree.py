@@ -4,6 +4,28 @@
 import json
 
 from .models.gentree import GenTree
+from .models.numrange import NumRange
+
+
+class NumTree:
+
+    def __init__(self, start, end, step):
+        self.start = start
+        self.end = end
+        self.step = step
+
+    def process(self):
+        values = []
+        current = self.start
+
+        while True:
+            values.append(str(current))
+            current += self.step
+            if current >= self.end:
+                break
+
+        nr = NumRange(values, dict())
+        return nr
 
 
 class Tree:
