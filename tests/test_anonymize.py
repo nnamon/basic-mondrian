@@ -27,12 +27,23 @@ data = [['greg', 'male', 'AAA'],
         ['pearl', 'male', 'PPP'],
         ['peridot', 'male', 'QQQ']]
 
-expected = ([['greg', '*', 'AAA'], ['greg', '*', 'LLL'], ['greg', '*', 'MMM'],
-             ['connie', '*', 'BBB'], ['connie', '*', 'NNN'], ['garnet', 'female', 'CCC'],
-             ['garnet', 'female', 'DDD'], ['amethyst', '*', 'EEE'], ['amethyst', '*', 'FFF'],
-             ['pearl', 'male', 'HHH'], ['pearl', 'male', 'PPP'], ['pearl', 'female', 'GGG'],
-             ['pearl', 'female', 'OOO'], ['peridot', 'male', 'KKK'], ['peridot', 'male', 'QQQ'],
-             ['peridot', 'female', 'III'], ['peridot', 'female', 'JJJ']], 0.0)
+expected = ([['greg', '*', 'AAA'],
+             ['greg', '*', 'LLL'],
+             ['greg', '*', 'MMM'],
+             ['connie', '*', 'BBB'],
+             ['connie', '*', 'NNN'],
+             ['garnet', 'female', 'CCC'],
+             ['garnet', 'female', 'DDD'],
+             ['amethyst', '*', 'EEE'],
+             ['amethyst', '*', 'FFF'],
+             ['pearl', 'male', 'HHH'],
+             ['pearl', 'male', 'PPP'],
+             ['pearl', 'female', 'GGG'],
+             ['pearl', 'female', 'OOO'],
+             ['peridot', 'male', 'KKK'],
+             ['peridot', 'male', 'QQQ'],
+             ['peridot', 'female', 'III'],
+             ['peridot', 'female', 'JJJ']], 0.0)
 
 data2 = [['greg', 'male', '2', 'AAA'],
          ['connie', 'female', '5', 'BBB'],
@@ -51,6 +62,24 @@ data2 = [['greg', 'male', '2', 'AAA'],
          ['pearl', 'female', '1', 'OOO'],
          ['pearl', 'male', '2', 'PPP'],
          ['peridot', 'male', '3', 'QQQ']]
+
+expected2 = ([['greg', '*', '2,4', 'AAA'],
+              ['greg', '*', '2,4', 'LLL'],
+              ['human', '*', '5,6', 'BBB'],
+              ['human', '*', '5,6', 'MMM'],
+              ['human', '*', '5,6', 'NNN'],
+              ['gem', 'female', '1,2', 'CCC'],
+              ['gem', 'female', '1,2', 'DDD'],
+              ['gem', 'female', '1,2', 'OOO'],
+              ['gem', 'male', '2', 'HHH'],
+              ['gem', 'male', '2', 'KKK'],
+              ['gem', 'male', '2', 'PPP'],
+              ['gem', '*', '3,4', 'EEE'],
+              ['gem', '*', '3,4', 'FFF'],
+              ['gem', '*', '3,4', 'QQQ'],
+              ['gem', 'female', '5,9', 'GGG'],
+              ['gem', 'female', '5,9', 'III'],
+              ['gem', 'female', '5,9', 'JJJ']], 22.54901960784314)
 
 
 def test_anonymizer():
