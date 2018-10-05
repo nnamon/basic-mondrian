@@ -7,8 +7,11 @@
 from basic_mondrian.anonymize import Anonymizer
 from basic_mondrian.tree import Tree
 
+# import itertools
+
 sex_tree = {'male': [], 'female': []}
 gem_tree = {'gem': ['garnet', 'amethyst', 'pearl', 'peridot'], 'human': ['greg', 'connie']}
+
 data = [['greg', 'male', 'AAA'],
         ['connie', 'female', 'BBB'],
         ['garnet', 'female', 'CCC'],
@@ -82,6 +85,35 @@ expected2 = ([['greg', '*', '2,4', 'AAA'],
               ['gem', 'female', '5,9', 'JJJ']], 22.54901960784314)
 
 
+data3 = [['greg', 'male', '2', 'AAA'],
+         ['connie', 'female', '5', 'BBB'],
+         ['garnet', 'female', '1', 'CCC'],
+         ['garnet', 'female', '2', 'DDD'],
+         ['amethyst', 'female', '3', 'EEE'],
+         ['amethyst', 'male', '4', 'FFF'],
+         ['pearl', 'female', '5', 'GGG'],
+         ['pearl', 'male', '2', 'HHH'],
+         ['peridot', 'female', '6', 'III'],
+         ['peridot', 'female', '9', 'JJJ'],
+         ['peridot', 'male', '2', 'KKK'],
+         ['greg', 'female', '4', 'LLL'],
+         ['greg', 'female', '5', 'MMM'],
+         ['connie', 'male', '6', 'NNN'],
+         ['pearl', 'female', '1', 'OOO'],
+         ['pearl', 'male', '2', 'PPP'],
+         ['pink diamond', 'female', '99', 'QQQ']]
+
+
+# def compare_result(obja, objb):
+# assert type(obja) == type(objb)
+# tuples_a, ncma = obja
+# tuples_b, ncmb = objb
+# assert ncma == ncmb
+# for rowa, rowb in itertools.izip(tuples_a, tuples_b):
+# for itema, itemb in itertools.izip(rowa, rowb):
+# assert itema == itemb
+
+
 def test_anonymizer():
     sex_tree_instance = Tree.struct_to_tree(gem_tree)
     gem_tree_instance = Tree.struct_to_tree(sex_tree)
@@ -95,7 +127,7 @@ def test_anonymizer():
     assert type(result) is tuple
 
 
-def test_anonymizer2():
+def test_anonymizer_numeral():
     sex_tree_instance = Tree.struct_to_tree(gem_tree)
     gem_tree_instance = Tree.struct_to_tree(sex_tree)
 
@@ -106,4 +138,18 @@ def test_anonymizer2():
 
     assert anon is not None
     result = anon.process(data2, k=2, qi_num=3)
+    assert type(result) is tuple
+
+
+def test_anonymizer_non_existent():
+    sex_tree_instance = Tree.struct_to_tree(gem_tree)
+    gem_tree_instance = Tree.struct_to_tree(sex_tree)
+
+    anon = Anonymizer()
+    anon.add_tree(sex_tree_instance)
+    anon.add_tree(gem_tree_instance)
+    anon.add_numrange(0, 11, 1)
+
+    assert anon is not None
+    result = anon.process(data3, k=2, qi_num=3, normalize=True)
     assert type(result) is tuple

@@ -14,6 +14,17 @@ class NumTree:
         self.end = end
         self.step = step
 
+    def extend(self, value):
+        value = float(value)
+        if value < self.start:
+            self.start = value - self.step
+        elif value > self.end:
+            self.end = value + self.step
+
+    def covers(self, value):
+        value = float(value)
+        return self.start <= value <= self.end
+
     def process(self):
         values = []
         current = self.start
@@ -41,6 +52,13 @@ class Tree:
         self.dictionary = self.flatten(self.struct)
         return self.dictionary
 
+    def extend(self, value):
+        self.dictionary = None
+        self.struct[value] = []
+
+    def covers(self, value):
+        return value in self.flatten_to_list(self.struct)
+
     @staticmethod
     def struct_to_tree(data):
         return Tree(data)
@@ -49,6 +67,18 @@ class Tree:
     def json_to_tree(json_data):
         working = json.loads(json_data)
         return Tree.struct_to_tree(working)
+
+    def flatten_to_list(self, parent):
+        local = []
+        if type(parent) is str:
+            local.append(parent)
+            return local
+        if type(parent) is list:
+            return parent
+        for k, v in parent.iteritems():
+            local.append(k)
+            local.extend(self.flatten_to_list(v))
+        return local
 
     def flatten(self, struct, parent=None, working=None):
         if working is None:
