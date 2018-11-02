@@ -3,8 +3,8 @@
 
 import copy
 
-import mondrian
-from tree import NumTree, Tree
+from . import mondrian
+from .tree import NumTree, Tree
 
 X_ELEMENT = 0
 Y_ELEMENT = 1
