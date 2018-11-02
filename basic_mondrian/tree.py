@@ -75,7 +75,7 @@ class Tree:
             return local
         if type(parent) is list:
             return parent
-        for k, v in parent.iteritems():
+        for k, v in parent.items():
             local.append(k)
             local.extend(self.flatten_to_list(v))
         return local
@@ -89,7 +89,7 @@ class Tree:
             working['*'] = parent
 
         if type(struct) is dict:
-            for i, v in struct.iteritems():
+            for i, v in struct.items():
                 node = GenTree(i, parent, False)
                 self.flatten(v, node, working)
                 working[i] = node
