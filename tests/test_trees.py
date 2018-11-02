@@ -24,5 +24,5 @@ def test_data_to_tree():
 def test_data_to_3d_tree():
     tree_instance = Tree.struct_to_tree(tree_data_3d)
     result = tree_instance.process()
-    print result
+    print(result)
     assert len(result.keys()) == 8

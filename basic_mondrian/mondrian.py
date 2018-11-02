@@ -6,7 +6,6 @@
 """
 
 from .models.numrange import NumRange
-from .utils.utility import cmp_str
 
 
 class Partition(object):
@@ -134,8 +133,8 @@ class BasicMondrian:
         """
         frequency = self.frequency_set(partition, dim)
         split_val = ''
-        value_list = frequency.keys()
-        value_list.sort(cmp=cmp_str)
+        value_list = sorted(frequency.keys(), key=int)
+
         total = sum(frequency.values())
         middle = total / 2
 
