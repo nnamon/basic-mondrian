@@ -104,6 +104,24 @@ data3 = [['greg', 'male', '2', 'AAA'],
          ['pink diamond', 'female', '99', 'QQQ']]
 
 
+data4 = [['greg', 'male', '2', 'AAA', 'WWW', 'XXX'],
+         ['connie', 'female', '5', 'BBB', 'WWW', 'XXX'],
+         ['garnet', 'female', '1', 'CCC', 'WWW', 'XXX'],
+         ['garnet', 'female', '2', 'DDD', 'WWW', 'XXX'],
+         ['amethyst', 'female', '3', 'EEE', 'WWW', 'XXX'],
+         ['amethyst', 'male', '4', 'FFF', 'WWW', 'XXX'],
+         ['pearl', 'female', '5', 'GGG', 'WWW', 'XXX'],
+         ['pearl', 'male', '2', 'HHH', 'WWW', 'XXX'],
+         ['peridot', 'female', '6', 'III', 'WWW', 'XXX'],
+         ['peridot', 'female', '9', 'JJJ', 'WWW', 'XXX'],
+         ['peridot', 'male', '2', 'KKK', 'WWW', 'XXX'],
+         ['greg', 'female', '4', 'LLL', 'WWW', 'XXX'],
+         ['greg', 'female', '5', 'MMM', 'WWW', 'XXX'],
+         ['connie', 'male', '6', 'NNN', 'WWW', 'XXX'],
+         ['pearl', 'female', '1', 'OOO', 'WWW', 'XXX'],
+         ['pearl', 'male', '2', 'PPP', 'WWW', 'XXX'],
+         ['pink diamond', 'female', '99', 'QQQ', 'WWW', 'XXX']]
+
 # def compare_result(obja, objb):
 # assert type(obja) == type(objb)
 # tuples_a, ncma = obja
@@ -152,4 +170,18 @@ def test_anonymizer_non_existent():
 
     assert anon is not None
     result = anon.process(data3, k=2, qi_num=3, normalize=True)
+    assert type(result) is tuple
+
+
+def test_anonymizer_more_than_one_si():
+    sex_tree_instance = Tree.struct_to_tree(gem_tree)
+    gem_tree_instance = Tree.struct_to_tree(sex_tree)
+
+    anon = Anonymizer()
+    anon.add_tree(sex_tree_instance)
+    anon.add_tree(gem_tree_instance)
+    anon.add_numrange(0, 11, 1)
+
+    assert anon is not None
+    result = anon.process(data4, k=2, qi_num=3, normalize=True)
     assert type(result) is tuple

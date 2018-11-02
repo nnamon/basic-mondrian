@@ -354,7 +354,7 @@ class BasicMondrian:
                 r_ncp += self.get_normalized_width(partition, i)
             temp = partition.middle
             for i in range(len(partition)):
-                result.append(temp + [partition.member[i][-1]])
+                result.append(temp + partition.member[i][self.qi_len:])
             r_ncp *= len(partition)
             ncp += r_ncp
 
